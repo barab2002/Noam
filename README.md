@@ -15,6 +15,8 @@ The goal is simple:
  > Bugs are not insects here.  
 > They are just features wearing a funny costume 🐛
 
+ <img width="700" height="534" alt="gxixhpbbbd921" src="https://github.com/user-attachments/assets/be14291e-f865-43d0-8bae-602fe23b0768" />
+
 
 ## 🧭 What are we building here?
 
