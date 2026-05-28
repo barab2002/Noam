@@ -6,7 +6,6 @@ const MAX_DIFF_CHARS = 15000;
 const AI_MODEL   = 'gpt-4o';
 const AI_API_URL = 'https://models.inference.ai.azure.com/chat/completions';
 
-const KAREN_IMAGE_URL = 'https://github.com/barab2002.png';
 
 const SYSTEM_PROMPT = `You are "Code Karen" — a senior software engineer with 15+ years of experience who does not accept mediocre code. You are direct, thorough, and unapologetically high-standard. Your job is to review a student's pull request and help them grow into a professional developer.
 
@@ -192,7 +191,7 @@ async function callAI(token, diffText) {
 
 // ─── Post review to GitHub ────────────────────────────────────────────────────
 async function postReview(repo, prNumber, token, comments, fallbackBody) {
-  const karenHeader = `![Code Karen](${KAREN_IMAGE_URL})\n## 💅 Code Karen has reviewed your PR\n> *"Excuse me, I couldn't help but notice some issues with your code. I'd like to speak to your compiler."*\n\n---\n\n`;
+  const karenHeader = `## 💅 Code Karen has reviewed your PR\n> *"Excuse me, I couldn't help but notice some issues with your code. I'd like to speak to your compiler."*\n\n---\n\n`;
   const body = fallbackBody || (
     comments.length > 0
       ? `${karenHeader}Found **${comments.length}** thing(s) that need to be fixed. See inline comments below — and don't make me call your manager. 😤`
@@ -254,7 +253,7 @@ async function main() {
 
   if (rawComments === null) {
     await postReview(REPO, PR_NUMBER, GITHUB_TOKEN, [],
-      `![Code Karen](${KAREN_IMAGE_URL})\n## 💅 Code Karen has reviewed your PR\n> *"I want to speak to the manager of this diff."*\n\n---\n\n⚠️ Karen had trouble reading your code. Try pushing again and she'll be back. 😤`);
+      `## 💅 Code Karen has reviewed your PR\n> *"I want to speak to the manager of this diff."*\n\n---\n\n⚠️ Karen had trouble reading your code. Try pushing again and she'll be back. 😤`);
     return;
   }
 
