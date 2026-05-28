@@ -6,6 +6,8 @@ const MAX_DIFF_CHARS = 15000;
 const AI_MODEL   = 'gpt-4o-mini';
 const AI_API_URL = 'https://models.inference.ai.azure.com/chat/completions';
 
+const KAREN_IMAGE_URL = 'https://media1.tenor.com/m/DpSuP4pQXvAAAAAd/karen-i-want-to-speak-to-the-manager.gif';
+
 const SYSTEM_PROMPT = `You are a senior software engineer and expert code reviewer. Your job is to help a beginner student learn to code by reviewing their pull request changes.
 
 Your expertise covers:
@@ -151,10 +153,11 @@ async function callAI(token, diffText) {
 
 // ─── Post review to GitHub ────────────────────────────────────────────────────
 async function postReview(repo, prNumber, token, comments, fallbackBody) {
+  const karenHeader = `![Code Karen](${KAREN_IMAGE_URL})\n## 💅 Code Karen has reviewed your PR\n> *"Excuse me, I couldn't help but notice some issues with your code. I'd like to speak to your compiler."*\n\n---\n\n`;
   const body = fallbackBody || (
     comments.length > 0
-      ? `## 🤖 AI Code Review\n\nFound **${comments.length}** suggestion(s). See inline comments on the diff.`
-      : `## 🤖 AI Code Review\n\nLooks clean! No issues found in the changed lines. Keep it up! 🎉`
+      ? `${karenHeader}Found **${comments.length}** thing(s) that need to be fixed. See inline comments below — and don't make me call your manager. 😤`
+      : `${karenHeader}Everything looks clean! No complaints from Karen today. Don't get used to it. 💅`
   );
 
   const ghComments = (comments || []).map((c) => ({
@@ -212,7 +215,7 @@ async function main() {
 
   if (rawComments === null) {
     await postReview(REPO, PR_NUMBER, GITHUB_TOKEN, [],
-      '## 🤖 AI Code Review\n\n⚠️ The AI reviewer returned an unexpected response. Please try pushing again to re-trigger the review.');
+      `![Code Karen](${KAREN_IMAGE_URL})\n## 💅 Code Karen has reviewed your PR\n> *"I want to speak to the manager of this diff."*\n\n---\n\n⚠️ Karen had trouble reading your code. Try pushing again and she'll be back. 😤`);
     return;
   }
 
