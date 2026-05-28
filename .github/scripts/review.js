@@ -3,7 +3,7 @@ const https = require('https');
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const MAX_DIFF_CHARS = 15000;
-const GEMINI_MODEL   = 'gemini-1.5-flash';
+const GEMINI_MODEL   = 'gemini-2.0-flash';
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const SYSTEM_PROMPT = `You are a senior software engineer and expert code reviewer. Your job is to help a beginner student learn to code by reviewing their pull request changes.
