@@ -116,11 +116,12 @@ function parseDiff(diffText) {
   return validLines;
 }
 
-// ─── Call GitHub Models (gpt-4o-mini, free via GITHUB_TOKEN) ─────────────────
+// ─── Call GitHub Models ───────────────────────────────────────────────────────
 async function callAI(token, diffText) {
   const payload = JSON.stringify({
     model: AI_MODEL,
-    response_format: { type: 'json_object' },
+    // No response_format enforced — the prompt instructs plain JSON array output.
+    // json_object mode conflicts with array-only responses and causes parse failures.
     temperature: 0.1,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
@@ -143,14 +144,19 @@ async function callAI(token, diffText) {
   const text = parsed.choices?.[0]?.message?.content;
   if (!text) throw new Error(`Unexpected API response shape:\n${res.body}`);
 
+  console.log('Raw AI response:', text.slice(0, 300));
+
   try {
-    // response_format: json_object guarantees valid JSON, but may wrap array in object
-    const data = JSON.parse(text);
-    const comments = Array.isArray(data) ? data : (data.comments || data.reviews || Object.values(data)[0]);
+    // Strip markdown fences if the model wrapped the JSON in ```json ... ```
+    const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    const data = JSON.parse(cleaned);
+    // Accept bare array or wrapped object e.g. {"comments": [...]}
+    const comments = Array.isArray(data) ? data : Object.values(data).find(Array.isArray);
     if (!Array.isArray(comments)) throw new Error('No array found in response');
     return comments;
   } catch (e) {
-    console.error('AI returned unexpected JSON:', text);
+    console.error('Failed to parse AI response:', e.message);
+    console.error('Full AI text:', text);
     return null;
   }
 }
