@@ -3,8 +3,8 @@ const https = require('https');
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const MAX_DIFF_CHARS = 15000;
-const GEMINI_MODEL   = 'gemini-2.0-flash';
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const AI_MODEL   = 'gpt-4o-mini';
+const AI_API_URL = 'https://models.inference.ai.azure.com/chat/completions';
 
 const SYSTEM_PROMPT = `You are a senior software engineer and expert code reviewer. Your job is to help a beginner student learn to code by reviewing their pull request changes.
 
@@ -110,35 +110,41 @@ function parseDiff(diffText) {
   return validLines;
 }
 
-// ─── Call Gemini Flash ────────────────────────────────────────────────────────
-async function callGemini(apiKey, diffText) {
-  const prompt = `${SYSTEM_PROMPT}\n\n\`\`\`diff\n${diffText}\n\`\`\``;
+// ─── Call GitHub Models (gpt-4o-mini, free via GITHUB_TOKEN) ─────────────────
+async function callAI(token, diffText) {
   const payload = JSON.stringify({
-    generationConfig: { responseMimeType: 'application/json' },
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    model: AI_MODEL,
+    response_format: { type: 'json_object' },
+    temperature: 0.1,
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user',   content: `\`\`\`diff\n${diffText}\n\`\`\`` },
+    ],
   });
 
-  const url = `${GEMINI_API_URL}?key=${apiKey}`;
-  const res = await httpsRequest(url, {
+  const res = await httpsRequest(AI_API_URL, {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(payload),
     },
   }, payload);
 
-  if (res.status !== 200) throw new Error(`Gemini API error: ${res.status}\n${res.body}`);
+  if (res.status !== 200) throw new Error(`GitHub Models API error: ${res.status}\n${res.body}`);
 
   const parsed = JSON.parse(res.body);
-  const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error(`Unexpected Gemini response shape:\n${res.body}`);
+  const text = parsed.choices?.[0]?.message?.content;
+  if (!text) throw new Error(`Unexpected API response shape:\n${res.body}`);
 
   try {
-    const comments = JSON.parse(text);
-    if (!Array.isArray(comments)) throw new Error('Response is not an array');
+    // response_format: json_object guarantees valid JSON, but may wrap array in object
+    const data = JSON.parse(text);
+    const comments = Array.isArray(data) ? data : (data.comments || data.reviews || Object.values(data)[0]);
+    if (!Array.isArray(comments)) throw new Error('No array found in response');
     return comments;
   } catch (e) {
-    console.error('Gemini returned non-JSON text:', text);
+    console.error('AI returned unexpected JSON:', text);
     return null;
   }
 }
@@ -183,11 +189,10 @@ async function postReview(repo, prNumber, token, comments, fallbackBody) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 async function main() {
-  const { GEMINI_API_KEY, GITHUB_TOKEN, PR_NUMBER, REPO } = process.env;
-  if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY secret is not set');
-  if (!GITHUB_TOKEN)   throw new Error('GITHUB_TOKEN is not available');
-  if (!PR_NUMBER)      throw new Error('PR_NUMBER env var is missing');
-  if (!REPO)           throw new Error('REPO env var is missing');
+  const { GITHUB_TOKEN, PR_NUMBER, REPO } = process.env;
+  if (!GITHUB_TOKEN) throw new Error('GITHUB_TOKEN is not available');
+  if (!PR_NUMBER)    throw new Error('PR_NUMBER env var is missing');
+  if (!REPO)         throw new Error('REPO env var is missing');
 
   console.log(`Reviewing PR #${PR_NUMBER} in ${REPO}...`);
 
@@ -202,11 +207,10 @@ async function main() {
   const validLines = parseDiff(diff);
   console.log(`Valid comment targets: ${validLines.size} added lines`);
 
-  // 3. Call Gemini for the review
-  const rawComments = await callGemini(GEMINI_API_KEY, truncated);
+  // 3. Call AI for the review
+  const rawComments = await callAI(GITHUB_TOKEN, truncated);
 
   if (rawComments === null) {
-    // AI returned bad JSON — post a fallback general comment
     await postReview(REPO, PR_NUMBER, GITHUB_TOKEN, [],
       '## 🤖 AI Code Review\n\n⚠️ The AI reviewer returned an unexpected response. Please try pushing again to re-trigger the review.');
     return;
@@ -221,7 +225,7 @@ async function main() {
     }
     return true;
   });
-  console.log(`Gemini suggested ${rawComments.length} comment(s); ${filtered.length} on valid lines.`);
+  console.log(`AI suggested ${rawComments.length} comment(s); ${filtered.length} on valid lines.`);
 
   // 5. Post the review
   await postReview(REPO, PR_NUMBER, GITHUB_TOKEN, filtered);
