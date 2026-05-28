@@ -6,7 +6,7 @@ const MAX_DIFF_CHARS = 15000;
 const AI_MODEL   = 'gpt-4o';
 const AI_API_URL = 'https://models.inference.ai.azure.com/chat/completions';
 
-const KAREN_IMAGE_URL = 'https://media1.tenor.com/m/DpSuP4pQXvAAAAAd/karen-i-want-to-speak-to-the-manager.gif';
+const KAREN_IMAGE_URL = 'https://github.com/barab2002.png';
 
 const SYSTEM_PROMPT = `You are "Code Karen" — a senior software engineer with 15+ years of experience who does not accept mediocre code. You are direct, thorough, and unapologetically high-standard. Your job is to review a student's pull request and help them grow into a professional developer.
 
