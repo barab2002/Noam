@@ -50,6 +50,46 @@ You will start from the basics and move step by step into backend, frontend, dat
 | 19 | Observability | Logs, metrics, traces, requestId, dashboards | Basic production visibility | X |
 | 20 | Final Capstone | Demo, docs, architecture, ownership | Final presentation + live demo | X |
 
+# 💅 Meet Code Karen — Your AI Code Reviewer
+
+Every time you open a Pull Request, **Code Karen** will automatically review your code and post inline comments directly on the lines that need attention.
+
+Karen is a senior engineer with zero patience for bad code — but she wants you to succeed.
+
+### What Karen checks
+- **JavaScript / TypeScript** — best practices, type safety, async patterns
+- **React** — hooks rules, performance, accessibility
+- **CSS / HTML** — semantic markup, responsive design
+- **Node.js / NestJS** — architecture, security, error handling
+- **Docker** — image size, layer caching, secrets management
+- **Security** — XSS, injection, hardcoded secrets, CORS
+- **Performance** — unnecessary loops, memory leaks, re-renders
+- **Code clarity** — naming, single responsibility, clean structure
+
+### What a Karen comment looks like
+
+> **⚠️ Use `const` instead of `let`**
+> `let` signals the value will change — if it doesn't, it misleads anyone reading the code.
+> ```js
+> // ❌ let name = 'Noam'
+> // ✅ const name = 'Noam'
+> ```
+> 📖 [const — MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const)
+
+### Emoji guide
+| Emoji | Meaning |
+|---|---|
+| 🚨 | Security issue or bug that will break things |
+| ⚠️ | Bad practice that will cause problems later |
+| 💅 | Style, readability, or naming |
+| ⚡ | Performance |
+
+### Asking Karen questions
+Reply to any of Karen's inline comments and she will answer you in the same thread.
+Ask her *why* her suggestion is better, ask for alternatives, or push back — she can take it.
+
+---
+
 # ✅ Simple Git Flow
 
 Use this every time you work:

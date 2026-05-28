@@ -1,0 +1,28 @@
+name: Code Karen - Answer Questions
+
+on:
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+    # Never let the bot reply to itself (prevents infinite loops)
+    if: github.event.comment.user.login != 'github-actions[bot]'
+    permissions:
+      contents: read
+      pull-requests: write
+      models: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Answer question
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          IN_REPLY_TO_ID: ${{ github.event.comment.in_reply_to_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: node .github/scripts/reply.js
