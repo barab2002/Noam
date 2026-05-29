@@ -1,36 +1,37 @@
 // ex 1 in functions 1
-function GetLastDigit(number){
+function getLastDigit(number){
     return Math.abs(number % 10);
 }
-//console.log(GetLastDigit(1235))
+//console.log(getLastDigit(1235))
 
 
 // ex 2 in functions 1
-function GetAllButLastDigit(number) {
-    const str_num = String(number);
-    if (str_num.length === 1){
+function getAllButLastDigit(number) {
+    const strNum = String(number);
+    if (strNum.length === 1){
         return null
     };
-    return parseInt(str_num.slice(0,-1), 10);
+    return parseInt(strNum.slice(0,-1), 10);
 }
-//console.log(GetAllButLastDigit(1))
-//console.log(GetAllButLastDigit(1235))
+//console.log(getAllButLastDigit(1))
+//console.log(getAllButLastDigit(1235))
 
 
 // ex 3 in functions 1
-function GetAmountOfDigits(number){
+function getAmountOfDigits(number){
     return String(number).length;
 }
-//console.log(GetAmountOfDigits(1235))
+//console.log(getAmountOfDigits(1235))
 
 
 //ex 4 in functions 1
-function GetDigitInIndex(number, i){
-    const str_num_rev = String(number).split("").reverse().join("");
-    if (i >= 0 && i < str_num_rev.length){
-        return parseInt(str_num_rev[i], 10)  
+function getDigitInIndex(number, i){
+    const strNumRev = String(number).split("").reverse().join("");
+    if (i < strNumRev.length){
+        return parseInt(strNumRev[i], 10)  
     };
     return 0;
 }
 
-//console.log(GetDigitInIndex(1235,17))
+//console.log(getDigitInIndex(1235,3))
+
