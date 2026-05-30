@@ -32,3 +32,15 @@ const getDigitInIndex = (number, i) => {
     return parseInt(strNum[strNum.length - 1 - i], 10);
 }
 //console.log(getDigitInIndex(1235,0))
+
+const testNumbers = [1, 7, 12, 1235, 1000, 90001];
+
+testNumbers.forEach(num => {
+    console.log("Number:", num);
+    console.log("Last digit:", getLastDigit(num));
+    console.log("All but last digit:", getAllButLastDigit(num));
+    console.log("Amount of digits:", getAmountOfDigits(num));
+    console.log("Digit index 0:", getDigitInIndex(num, 0));
+    console.log("Digit index 1:", getDigitInIndex(num, 1));
+    console.log("-----");
+});
