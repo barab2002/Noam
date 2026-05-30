@@ -1,31 +1,45 @@
-// we assume all inputs are valid, so theres no need to check for edge cases.
 //ex 1 functions 2
-// this function will work for both numbers and numbers in string format 
+// this function will check if the number is a palindrome or not, assuming integers only and without casting the integer into a string.
 const isPalindrome = number => {
-    const strNum = String(number);
-    const rev = strNum.split("").reverse().join("");
-    return strNum === rev;
+    if (number < 0 || ( number % 10 === 0 && x!== 0)){
+        return false;
+    }
+    let revHalf = 0
+    while (number > revHalf) {
+        revHalf = (revHalf * 10) + (number % 10);
+        number = Math.floor(number / 10)
+    }
+    return number === revHalf || number === Math.floor(revHalf / 10);
 }
-//console.log(isPalindrome(12321))
+//console.log(isPalindrome(123217))
 
 //ex 2 functions 2
-//we will use the mathemtical method (perfect square) to check if the number is in the fibo series.
+//we will use the mathematical method (perfect square) to check if the number is in the fibo series.
 const isFromFibonacci = number => {
-    const one = Math.sqrt(5 * number * number + 4);
-    const two = Math.sqrt(5 * number * number - 4);
+    const sqrtPlus = Math.sqrt(5 * number * number + 4);
+    const sqrtMinus = Math.sqrt(5 * number * number - 4);
     return Number.isInteger(one) || Number.isInteger(two);
 }
 
 //console.log(isFromFibonacci(13))
 
 //ex 3 functions 3
-// i hate recursive functions, always did.
-// x and y and natural numbers
-const recursivePower = (x, y) => {
-    if (y === 0) {
+// base and exponent and natural numbers
+const recursivePower = (base, exponent) => {
+    if (exponent === 0) {
         return 1;
     }
 
-    return x * recursivePower(x, y - 1);
+    if (exponent === 1) {
+        return base;
+    }
+
+    const halfPower = recursivePower(base, Math.floor(exponent / 2));
+
+    if (exponent % 2 === 0) {
+        return halfPower * halfPower;
+    }
+
+    return base * halfPower * halfPower;
 };
 //console.log(recursivePower(2,5))
