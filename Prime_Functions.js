@@ -1,6 +1,6 @@
 const isPrime = num => {
     if (!Number.isInteger(num) || num <= 1) {
-        throw new Error('isPrime: input must be an integer greater than 1');
+        throw new Error(`isPrime: input must be an integer greater than 1. Received: ${num}`);
     }
     if (num === 2) return true;
     if (num % 2 === 0) return false;
@@ -13,14 +13,16 @@ const isPrime = num => {
     return true;
 };
 
+
+
 const findNthPrime = n => {
     if (!Number.isInteger(n) || n < 1) {
-        throw new Error('findNthPrime: input must be a positive integer');
+        throw new Error(`findNthPrime: input must be a positive integer. Received ${n}`);
     }
     if (n === 1) return 2;
     let primesCount = 1;
     let currentNumber = 3;
-    while (true) {
+    while (primesCount < n) {
         if (isPrime(currentNumber)) {
             primesCount++;
 
@@ -34,8 +36,8 @@ const findNthPrime = n => {
 
 
 const findPrimeDivisors = num => {
-    if (!Number.isInteger(num) || num < 1 ) {
-        throw new Error('findPrimeDivisors: input must be a positive integer')
+    if (!Number.isInteger(num) || num < 1) {
+        throw new Error(`findPrimeDivisors: input must be a positive integer. Received ${num}`)
     }
     const divisors = [];
     if (num % 2 === 0) {
@@ -60,13 +62,18 @@ const findPrimeDivisors = num => {
 };
 
 const firstPrimeLargerThan = num => {
+    if (!Number.isInteger(num)){
+        throw new Error (`firstPrimeLargerThan: Input must be a integer. Received ${num}`);
+    } 
+    if (num < 2) return 2; //checking for negative inputs which are still valid inputs, the answer will always be 2
     let candidate = num + 1;
-    if (candidate <= 2) return 2;
     if (candidate % 2 === 0) candidate ++;
     while(true){
         if (isPrime(candidate)) return candidate;
         candidate += 2;
     }
-}
+};
+
+
 
 
