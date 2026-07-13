@@ -120,10 +120,3 @@ const isValidJSON = (value) => {
     }
 }
 
-console.log(isValidJSON('{"name":"Zuko"}')); // true
-console.log(isValidJSON('{name:"Zuko"}'));   // false
-console.log(isValidJSON('[1,2,3]'));         // true
-console.log(isValidJSON('hello'));           // false
-console.log(isValidJSON('"hello"'));         // true
-console.log(isValidJSON('true'));            // true
-console.log(isValidJSON('null'));            // true
